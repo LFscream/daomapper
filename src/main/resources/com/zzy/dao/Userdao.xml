@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zzy.dao.Userdao">
+    <!--查询所有-->
+    <!--namespace指向的就是userdao接口类,selectid代表userdao中要执行的方法,resultType代表返回值类型-->
+    <select id="findAll" resultType="com.zzy.domain.User">
+        select * from user
+    </select>
+    <!--删-->
+    <select id="deleteUser">
+
+        DELETE FROM USER WHERE id =#{uid};
+    </select>
+    <!--改-->
+    <update id="updateUser" parameterType="com.zzy.domain.User">
+
+     UPDATE USER SET username=#{username},address=#{address},sex=#{sex},address=#{address} WHERE id =#{id};
+    </update>
+    <!--增-->
+
+    <insert id="saveUser" parameterType="com.zzy.domain.User">
+        <!--配置操作完成后,获取插入数据的id <selectKey keyProperty(插入数据的名字)="id" (插入的列)keyColumn="id" (返回的结果类型插入的类型)resultType="int" (在插入后执行)order="AFTER">-->
+        <selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER">
+        SELECT last_insert_id();
+
+        </selectKey>
+
+        INSERT INTO USER(`username`,`birthday`,`sex`,`address`)VALUES(#{username},#{birthday},#{sex},#{address});
+
+    </insert>
+    <select id="findUserById" parameterType="int" resultType="com.zzy.domain.User">
+
+        SELECT * FROM USER  WHERE  id = #{uid};
+
+    </select>
+    <!--模糊查询-->
+    <select id="findByName" parameterType="string" resultType="com.zzy.domain.User">
+        SELECT * FROM USER  WHERE username LIKE #{username};
+    </select>
+
+    <!--模糊查询2,使用%${value}%-->
+    <select id="findByName2" parameterType="string" resultType="com.zzy.domain.User">
+        SELECT * FROM USER  WHERE username LIKE '%${value}%'
+    </select>
+    <!--聚合函数查询-->
+    <select id="countUser" resultType="int">
+
+        SELECT count(*) FROM USER
+    </select>
+    <select id="findByQueryVoName" parameterType="com.zzy.domain.queryVO" resultType="com.zzy.domain.User">
+        SELECT * FROM USER  WHERE username LIKE #{user.username}
+    </select>
+
+    <select id="findAllbyDifferentName" resultMap="usermap">
+        <!--select id as userid,username as username,birthday as userbirthday,sex as usersex,address as useraddress from user-->
+        select * from USER ;
+    </select>
+    <resultMap id="usermap" type="com.zzy.domain.User1">
+        <!--主键字段的对应-->
+     <id property="userid" column="id"></id>
+        <!--非主键字段对应-->
+     <!--<result property="username" column="name"></result>-->
+     <result property="userbirthday" column="birthday"></result>
+     <result property="usersex" column="sex"></result>
+     <result property="useraddress" column="address"></result>
+    </resultMap>
+
+
+</mapper>
